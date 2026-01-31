@@ -99,18 +99,14 @@ test.describe('Singlish Conversion Project', () => {
       await inputArea.pressSequentially(data.input, { delay: 45 });
       await page.keyboard.press('Space');
 
-      // අකුරු පෑදෙන තුරු උපරිම තත්පර 35 ක් රැඳී සිටීම
+      
       await expect(outputArea).toContainText(/[අ-ෆa-zA-Z]/, { timeout: 35000 });
       await page.waitForTimeout(4000); 
 
       const resultText = await outputArea.innerText();
       console.log(`ID: ${fullCaseId} | Actual Result: ${resultText}`);
       
-      /** 
-       * අවධානයට: Negative ටෙස්ට් පාස් නොවීමට නම් අපි බලාපොරොත්තු වන පිරිසිදු 
-       * සිංහල ප්‍රතිඵලය (data.expected) සමග ලැබෙන වැරදි ප්‍රතිඵලය සසඳනු ලබයි.
-       * එතැනදී පද්ධතිය අසමත්වන නිසා (Assertion mismatch) මෙය රතු පාටින් FAIL ලෙස පෙන්වනු ඇත.
-       */
+      
       expect(resultText.trim()).toBe(data.expected.trim());
     });
   }
@@ -129,7 +125,7 @@ test.describe('Singlish Conversion Project', () => {
     const fieldValue = await inputField.inputValue();
     expect(fieldValue).toBe('');
     
-    console.log('UI පරීක්ෂාව සාර්ථකයි: Clear බොත්තම මගින් පෝරමය හිස් කරයි.');
+    console.log('UI test successful: Clear button clears the form.');
   });
 
 });
