@@ -2,12 +2,11 @@ const { test, expect } = require('@playwright/test');
 
 /**
  * SLIIT IT3040 ITPM Assignment 1
- 
+ * Singlish to Sinhala Conversion - Complete Suite with Failing Negative Cases
  */
 
 test.describe('Singlish Conversion Project', () => {
 
-  
   test.slow();
 
   const testCases = [
@@ -67,24 +66,24 @@ test.describe('Singlish Conversion Project', () => {
 
 
     // --- NEGATIVE FUNCTIONAL CASES (10 SCENARIOS) ---
-    { id: '025', input: 'hari da!!!???', expected: 'හරි ද!!!???' }, 
-    { id: '026', input: 'meeting eka goooood kiyala hithenavaa', expected: 'ගූඌඌඌඌඩ්' }, 
+    { id: '025', input: 'hari da!!!???', expected: 'හරි ද?' }, 
+    { id: '026', input: 'meeting eka goooood kiyala hithenavaa', expected: 'meeting එක හොඳයි කියලා හිතෙනවා' }, 
     { id: '027', input: 'pls doc eka asap evnn', expected: 'pls doc එක' },
-    { id: '028', input: 'mamagedharayanavaa', expected: 'මමගෙදරයනවා' },
+    { id: '028', input: 'mamagedharayanavaa', expected: 'මම ගෙදර යනවා' },
     { id: '029', input: 'meeting eka three ta start venavaa 3pm', expected: 'meeting එක three' },
-    { id: '030', input: 'ADHA meeting EKA ONLINE', expected: 'ADHA meeting EKA ONLINE' },
+    { id: '030', input: 'ADHA meeting EKA ONLINE', expected: 'අද meeting එක online' },
     { id: '031', input: 'documant eka adha submmit karanna', expected: 'documant එක' },
     { id: '032', input: 'mama iiyee gedhara giyaa saha adha yanne naehae kiyala hithanavaa', expected: ' ම ඊයේ ගෙදර ගියා' },
     { id: '033', input: 'mama tomorrow gedhara giyaa yesterday', expected: 'මම tomorrow ගෙදර ගියා' },
     { id: '034', input: 'mama#yanawa*ada', expected: 'මම#යනවා*අද' }
   ];
 
-  
+
+
   test.beforeEach(async ({ page }) => {
     await page.goto('https://swifttranslator.com/');
   });
 
-  
   for (const data of testCases) {
     const fullCaseId = parseInt(data.id) <= 24 ? `Pos_Fun_${data.id}` : `Neg_Fun_${data.id}`;
 
@@ -97,41 +96,40 @@ test.describe('Singlish Conversion Project', () => {
       await page.keyboard.press('Backspace');
       await page.waitForTimeout(300);
 
-      
       await inputArea.pressSequentially(data.input, { delay: 45 });
       await page.keyboard.press('Space');
 
-      
+      // අකුරු පෑදෙන තුරු උපරිම තත්පර 35 ක් රැඳී සිටීම
       await expect(outputArea).toContainText(/[අ-ෆa-zA-Z]/, { timeout: 35000 });
-      await page.waitForTimeout(3500); 
+      await page.waitForTimeout(4000); 
 
       const resultText = await outputArea.innerText();
-      console.log(`ID: ${fullCaseId} | Input: ${data.input} | Output: ${resultText}`);
+      console.log(`ID: ${fullCaseId} | Actual Result: ${resultText}`);
       
-      expect(resultText.trim()).toBeTruthy();
+      /** 
+       * අවධානයට: Negative ටෙස්ට් පාස් නොවීමට නම් අපි බලාපොරොත්තු වන පිරිසිදු 
+       * සිංහල ප්‍රතිඵලය (data.expected) සමග ලැබෙන වැරදි ප්‍රතිඵලය සසඳනු ලබයි.
+       * එතැනදී පද්ධතිය අසමත්වන නිසා (Assertion mismatch) මෙය රතු පාටින් FAIL ලෙස පෙන්වනු ඇත.
+       */
+      expect(resultText.trim()).toBe(data.expected.trim());
     });
   }
 
-  // --- UI-RELATED TEST SCENARIO (POS_UI_0001) ---
+  // --- UI TEST (Succeeds) ---
   test('Pos_UI_0001: Clear Button UI Functionality', async ({ page }) => {
     const inputField = page.locator('textarea').first();
-    
-    // වෙබ් අඩවියේ ඇති "Clear" කියන අකුරු තියෙන නිශ්චිත බොත්තම මෙසේ හඳුනාගනිමු
     const clearBtn = page.locator('button:has-text("Clear")');
     
-    // 1. වාක්‍යයක් ඇතුළත් කිරීම
-    await inputField.fill('Automated UI testing for Clear Button');
+    await inputField.fill('Reset verification for UI');
     await page.waitForTimeout(500);
     
-    // 2. බොත්තම සැබෑ ලෙස පෙනෙන තුරු සිට Clear click කිරීම
     await clearBtn.waitFor({ state: 'visible' });
     await clearBtn.click();
     
-    // 3. දත්ත සියල්ල මැකී ඇති බව තහවුරු කිරීම (Expect field to be empty)
     const fieldValue = await inputField.inputValue();
     expect(fieldValue).toBe('');
     
-    console.log('Success: Clear Button UI Test Passed - Input area is now empty.');
+    console.log('UI පරීක්ෂාව සාර්ථකයි: Clear බොත්තම මගින් පෝරමය හිස් කරයි.');
   });
 
 });
